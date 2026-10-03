@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PetMate — Find a Friend for Your Pet</title>
+<meta name="description" content="PetMate helps you find playdates, chat, plan meetups, and explore adoption — for dogs, cats, and every pet in between.">
+<meta property="og:title" content="PetMate">
+<meta property="og:description" content="Swipe, match & chat to find playmates, adopt pets & connect nearby.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream-bg: #FDF6EC;
+    --cream-surface: #F5EADB;
+    --orange: #FF6B35;
+    --orange-deep: #E85A2A;
+    --text-primary: #2D2420;
+    --text-secondary: #8A7D74;
+    --border: #E8DACB;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--cream-bg); color: var(--text-primary); font-family: 'Inter', sans-serif; line-height: 1.6; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; font-weight: 600; letter-spacing: -0.01em; }
+
+  nav { display:flex; align-items:center; justify-content:space-between; padding: 28px 0; }
+  .nav-logo { font-family:'Fraunces',serif; font-weight:700; font-size:1.3rem; color:var(--text-primary); }
+  .nav-cta { background: var(--orange); color:#fff; font-family:'Inter',sans-serif; font-weight:600; font-size:0.9rem; padding:10px 22px; border-radius:24px; text-decoration:none; transition: background 0.2s ease; }
+  .nav-cta:hover { background: var(--orange-deep); }
+
+  .hero { display:grid; grid-template-columns: 1.1fr 0.9fr; align-items:center; gap: 60px; padding: 60px 0 100px; }
+  .hero h1 { font-size: clamp(2.4rem, 5vw, 3.4rem); line-height:1.08; margin-bottom: 22px; }
+  .hero h1 em { font-style: normal; color: var(--orange); }
+  .hero p { font-size: 1.15rem; color: var(--text-secondary); max-width: 440px; margin-bottom: 32px; }
+  .badge-row { display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .play-badge img { height: 56px; }
+  .badge-note { font-size: 0.82rem; color: var(--text-secondary); margin-top: 10px; }
+
+  .phone-mock { position:relative; width: 280px; height: 560px; margin: 0 auto; background:#fff; border-radius: 36px; border: 10px solid var(--text-primary); box-shadow: 0 30px 60px rgba(45,36,32,0.18); overflow:hidden; }
+  .phone-notch { position:absolute; top:0; left:50%; transform:translateX(-50%); width:120px; height:22px; background:var(--text-primary); border-radius:0 0 14px 14px; z-index:3; }
+  .swipe-card { position:absolute; inset:14px 14px 90px; border-radius:20px; background: linear-gradient(160deg, #FFD9BE, #FF6B35); display:flex; align-items:flex-end; padding: 18px; }
+  .swipe-card.behind { inset:24px 22px 100px; opacity:0.5; transform: scale(0.96); z-index:1; }
+  .swipe-card.front { z-index:2; }
+  .swipe-card-label { color:#fff; font-family:'Fraunces',serif; font-weight:600; font-size:1.3rem; }
+  .phone-nav { position:absolute; bottom:14px; left:14px; right:14px; height:60px; background:var(--cream-surface); border-radius:16px; display:flex; align-items:center; justify-content:space-around; }
+  .phone-nav span { width:22px; height:22px; border-radius:6px; background: var(--border); }
+  .phone-nav span.active { background: var(--orange); }
+
+  .feature { display:grid; grid-template-columns: 1fr 1fr; gap: 70px; align-items:center; padding: 90px 0; border-top: 1px solid var(--border); }
+  .feature.reverse .feature-visual { order: 2; }
+  .feature-eyebrow { font-size:0.82rem; font-weight:600; color: var(--orange); letter-spacing:0.04em; text-transform:uppercase; margin-bottom:14px; }
+  .feature h2 { font-size: clamp(1.6rem, 3vw, 2.1rem); margin-bottom: 16px; }
+  .feature p { color: var(--text-secondary); font-size:1.03rem; max-width: 440px; }
+  .feature-visual { display:flex; align-items:center; justify-content:center; }
+  .visual-card { width: 100%; max-width: 380px; aspect-ratio: 4/3; border-radius: 20px; background: var(--cream-surface); display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+
+  .icon-chat-bubble { width:90px; height:70px; background:var(--orange); border-radius:20px 20px 20px 4px; position:relative; }
+  .icon-chat-bubble::after { content:''; position:absolute; bottom:-14px; left:16px; width:0; height:0; border:14px solid transparent; border-top-color:var(--orange); border-bottom:0; }
+  .icon-map-pin { width:60px; height:60px; background:var(--orange); border-radius:50% 50% 50% 0; transform:rotate(-45deg); }
+  .icon-home { width:0; height:0; border-left:45px solid transparent; border-right:45px solid transparent; border-bottom:50px solid var(--orange); position:relative; }
+  .icon-home::after { content:''; position:absolute; top:50px; left:-35px; width:70px; height:50px; background:var(--orange); }
+  .icon-shield { width:70px; height:85px; background:var(--orange); clip-path: polygon(50% 0%, 100% 20%, 100% 60%, 50% 100%, 0% 60%, 0% 20%); }
+  .icon-swipe { display:flex; gap:10px; }
+  .icon-swipe div { width:50px; height:70px; border-radius:12px; }
+  .icon-swipe div:nth-child(1) { background: var(--cream-bg); border: 2px solid var(--border); transform: rotate(-8deg); }
+  .icon-swipe div:nth-child(2) { background: var(--orange); transform: translateY(-6px); }
+  .icon-swipe div:nth-child(3) { background: var(--cream-bg); border: 2px solid var(--border); transform: rotate(8deg); }
+
+  .safety-strip { background: var(--text-primary); color: #fff; padding: 60px 0; margin-top: 20px; }
+  .safety-strip .wrap { display:flex; align-items:center; gap: 40px; flex-wrap:wrap; }
+  .safety-strip h3 { color:#fff; font-size:1.4rem; margin-bottom:10px; }
+  .safety-strip p { color: rgba(255,255,255,0.75); max-width: 480px; }
+
+  .cta-section { text-align:center; padding: 100px 0; }
+  .cta-section h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 18px; }
+  .cta-section p { color: var(--text-secondary); margin-bottom: 36px; }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 0 60px; }
+  footer .wrap { display:flex; justify-content:space-between; flex-wrap:wrap; gap:20px; }
+  .footer-links { display:flex; gap: 24px; flex-wrap:wrap; }
+  footer a { color: var(--text-secondary); text-decoration:none; font-size:0.9rem; }
+  footer a:hover { color: var(--text-primary); }
+  .footer-copy { color: #B5A99C; font-size:0.85rem; }
+
+  @media (max-width: 860px) {
+    .hero, .feature, .feature.reverse .feature-visual { grid-template-columns: 1fr; order: 0; }
+    .hero { text-align:center; }
+    .hero p { margin-left:auto; margin-right:auto; }
+    .badge-row { justify-content:center; }
+    .phone-mock { margin-top: 40px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="nav-logo">PetMate</div>
+    <a class="nav-cta" href="#download">Get the App</a>
+  </nav>
+</div>
+
+<div class="wrap hero">
+  <div>
+    <h1>Find a <em>Friend</em><br>for Your Pet</h1>
+    <p>PetMate helps you discover playdates, chat, plan meetups, and explore adoption — for dogs, cats, and every pet in between.</p>
+    <div class="badge-row">
+      <a class="play-badge" href="https://play.google.com/store/apps/details?id=com.flexiqe.petmate" target="_blank" rel="noopener noreferrer">
+        <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play">
+      </a>
+    </div>
+    <div class="badge-note">Currently in closed testing — public release coming soon.</div>
+  </div>
+  <div class="phone-mock">
+    <div class="phone-notch"></div>
+    <div class="swipe-card behind"></div>
+    <div class="swipe-card front">
+      <div class="swipe-card-label">Bruno, 2</div>
+    </div>
+    <div class="phone-nav">
+      <span class="active"></span><span></span><span></span><span></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap feature">
+  <div>
+    <div class="feature-eyebrow">Discover</div>
+    <h2>Swipe Through Pets Near You</h2>
+    <p>Browse profiles of nearby pets and find great matches based on distance, personality, and what you're both looking for — friendship, playdates, or companionship.</p>
+  </div>
+  <div class="feature-visual">
+    <div class="visual-card"><div class="icon-swipe"><div></div><div></div><div></div></div></div>
+  </div>
+</div>
+
+<div class="wrap feature reverse">
+  <div>
+    <div class="feature-eyebrow">Match &amp; Chat</div>
+    <h2>Real Conversations, Not Just Likes</h2>
+    <p>When you and another pet owner both express interest, it's a match — chat directly in the app with typing indicators and read receipts, getting to know each other before meeting up.</p>
+  </div>
+  <div class="feature-visual">
+    <div class="visual-card"><div class="icon-chat-bubble"></div></div>
+  </div>
+</div>
+
+<div class="wrap feature">
+  <div>
+    <div class="feature-eyebrow">Meetups</div>
+    <h2>Plan Safe, Real-World Playdates</h2>
+    <p>Share your location or drop a pin on the map right from your chat, so planning where to actually meet is simple and clear for both of you.</p>
+  </div>
+  <div class="feature-visual">
+    <div class="visual-card"><div class="icon-map-pin"></div></div>
+  </div>
+</div>
+
+<div class="wrap feature reverse">
+  <div>
+    <div class="feature-eyebrow">Adoption</div>
+    <h2>Give a Pet a Second Chance</h2>
+    <p>Browse adoption posts from other users near you, or create your own to help a pet in need find a loving new home.</p>
+  </div>
+  <div class="feature-visual">
+    <div class="visual-card"><div class="icon-home"></div></div>
+  </div>
+</div>
+
+<div class="safety-strip">
+  <div class="wrap">
+    <div class="icon-shield" style="flex-shrink:0;"></div>
+    <div>
+      <h3>Safety First</h3>
+      <p>Block or report any user in one tap, automatic detection of messages that try to share contact info outside the app, and full control over who you connect with.</p>
+    </div>
+  </div>
+</div>
+
+<div class="wrap cta-section" id="download">
+  <h2>Ready to find your pet's new best friend?</h2>
+  <p>Download PetMate and start exploring nearby playmates today.</p>
+  <div class="badge-row" style="justify-content:center;">
+    <a class="play-badge" href="https://play.google.com/store/apps/details?id=com.flexiqe.petmate" target="_blank" rel="noopener noreferrer">
+      <img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play">
+    </a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-links">
+      <a href="https://petmate2k24-blip.github.io/petmate-legal/privacy-policy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+      <a href="https://petmate2k24-blip.github.io/petmate-legal/terms-of-service.html" target="_blank" rel="noopener noreferrer">Terms of Service</a>
+      <a href="https://petmate2k24-blip.github.io/petmate-legal/account-deletion.html" target="_blank" rel="noopener noreferrer">Delete Account</a>
+      <a href="https://flexiqe.com" target="_blank" rel="noopener noreferrer">Flexiqe</a>
+    </div>
+    <div class="footer-copy">© 2026 PetMate, by Flexiqe</div>
+  </div>
+</footer>
+
+</body>
+</html>
